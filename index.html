@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎰 SpinWin Game by Muzamil</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎰 SpinWin Game</h1>
+            <p class="subtitle">by Muzamil Ahmad</p>
+        </header>
+
+        <!-- User Registration Section -->
+        <div class="section" id="registrationSection">
+            <div class="card">
+                <h2>🎮 Welcome to SpinWin!</h2>
+                <p>Enter your details to start playing</p>
+                <form id="userForm">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="userName" placeholder="Enter your name" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="userEmail" placeholder="Enter your email" required>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-play"></i> Start Game
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Payment Section -->
+        <div class="section hidden" id="paymentSection">
+            <div class="card">
+                <h2>💳 Entry Payment Required</h2>
+                <p>Please make the entry payment to unlock the spin!</p>
+                <div class="payment-info">
+                    <div class="amount">₹50 Entry Fee</div>
+                    <p>Secure payment via Razorpay</p>
+                </div>
+                <a href="https://razorpay.me/@muzamilahmadmirgojjer" target="_blank" class="btn-payment">
+                    <i class="fas fa-credit-card"></i> Pay Now ₹50
+                </a>
+                <div class="payment-status">
+                    <p>✅ After payment, come back and click "I've Paid" to spin!</p>
+                    <button id="confirmPayment" class="btn-success">
+                        <i class="fas fa-check"></i> I've Paid - Let's Spin!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spinner Game Section -->
+        <div class="section hidden" id="gameSection">
+            <div class="game-card">
+                <h2>🎡 Spin the Wheel!</h2>
+                <div class="user-info">
+                    <p>Good luck, <span id="displayName"></span>! 🍀</p>
+                </div>
+                
+                <div class="spinner-container">
+                    <div class="spinner" id="spinner">
+                        <div class="slice win">WIN</div>
+                        <div class="slice lose">LOSE</div>
+                        <div class="slice try-again">TRY AGAIN</div>
+                        <div class="slice win">WIN</div>
+                        <div class="slice lose">LOSE</div>
+                        <div class="slice try-again">TRY AGAIN</div>
+                        <div class="slice win">WIN</div>
+                        <div class="slice lose">LOSE</div>
+                    </div>
+                    <div class="pointer">▼</div>
+                </div>
+                
+                <button id="spinBtn" class="btn-spin">
+                    <i class="fas fa-play"></i> SPIN NOW!
+                </button>
+                
+                <div class="result hidden" id="result">
+                    <div class="result-content">
+                        <div class="result-icon"></div>
+                        <div class="result-text"></div>
+                        <div class="result-message"></div>
+                    </div>
+                </div>
+
+                <button id="playAgain" class="btn-secondary hidden">
+                    <i class="fas fa-redo"></i> Play Again
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>© 2024 SpinWin Game - Created by Muzamil Ahmad</p>
+            <p>🔒 Secure payments via Razorpay</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
