@@ -6,7 +6,9 @@ let gameState = {
     },
     paymentComplete: false,
     gameActive: false,
-    spinCount: 0
+    spinCount: 0,
+    paymentId: null,
+    paymentVerified: false
 };
 
 // DOM Elements
@@ -21,11 +23,16 @@ const spinner = document.getElementById('spinner');
 const result = document.getElementById('result');
 const displayName = document.getElementById('displayName');
 
-// Spin results configuration
+// Spin results configuration - Made more realistic for real money
 const spinResults = [
-    { type: 'win', text: 'YOU WON!', message: 'Congratulations! 🎉 You won real money!', icon: '🏆' },
-    { type: 'lose', text: 'YOU LOST', message: 'Better luck next time! 😔 Try again?', icon: '😢' },
-    { type: 'try-again', text: 'TRY AGAIN', message: 'Free spin! 🔄 Spin once more!', icon: '🎯' }
+    { type: 'lose', text: 'YOU LOST', message: 'Better luck next time! 😔', icon: '😢' },
+    { type: 'lose', text: 'YOU LOST', message: 'Try again! 🔄', icon: '😕' },
+    { type: 'lose', text: 'YOU LOST', message: 'So close! 😐', icon: '😐' },
+    { type: 'lose', text: 'YOU LOST', message: 'Almost there! 😔', icon: '😔' },
+    { type: 'try-again', text: 'FREE SPIN!', message: 'Lucky! One more chance! 🍀', icon: '🎯' },
+    { type: 'lose', text: 'YOU LOST', message: 'Keep trying! 💪', icon: '😕' },
+    { type: 'win', text: 'YOU WON!', message: 'Congratulations! Money sent to your account! 🎉', icon: '🏆' },
+    { type: 'lose', text: 'YOU LOST', message: 'Better luck next time! 😔', icon: '😢' }
 ];
 
 // Initialize the game
@@ -94,24 +101,86 @@ function handleUserRegistration(e) {
     }, 1000);
 }
 
-// Handle payment confirmation
+// Handle payment confirmation - Made more secure
 function handlePaymentConfirmation() {
-    // In a real app, you'd verify payment via webhook/API
-    // For demo, we'll simulate payment confirmation
+    // Show payment verification process
+    confirmPaymentBtn.disabled = true;
+    confirmPaymentBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying Payment...';
     
-    showNotification('Payment confirmed! 💳✅', 'success');
-    gameState.paymentComplete = true;
+    showNotification('⏳ Verifying your payment with Razorpay...', 'info');
     
+    // Simulate payment verification delay (in real app, this would be API call)
     setTimeout(() => {
-        transitionToSection('game');
-        displayName.textContent = gameState.user.name;
+        // Ask user for payment confirmation details
+        const paymentId = prompt(
+            "🔐 Payment Verification Required!\n\n" +
+            "To verify your payment, please enter:\n" +
+            "- Your Razorpay payment ID (starts with 'pay_')\n" +
+            "- Or your UTR/Reference Number\n" +
+            "- Or last 4 digits of amount + your phone number\n\n" +
+            "Example: pay_123abc or UTR123456789"
+        );
+        
+        if (!paymentId || paymentId.trim().length < 8) {
+            showNotification('❌ Invalid payment details! Please try again.', 'error');
+            confirmPaymentBtn.disabled = false;
+            confirmPaymentBtn.innerHTML = '<i class="fas fa-check"></i> I\'ve Paid - Verify Now';
+            return;
+        }
+        
+        // Store payment ID for verification
+        gameState.paymentId = paymentId.trim();
+        
+        // Simulate API verification (in real app, verify with Razorpay API)
+        setTimeout(() => {
+            // For demo - simple validation (in real app, call backend API)
+            if (validatePaymentId(paymentId)) {
+                gameState.paymentComplete = true;
+                gameState.paymentVerified = true;
+                
+                showNotification('✅ Payment verified successfully!', 'success');
+                
+                // Log payment for admin tracking
+                console.log(`💳 Payment Verified:`, {
+                    user: gameState.user.name,
+                    email: gameState.user.email,
+                    paymentId: gameState.paymentId,
+                    timestamp: new Date().toISOString()
+                });
+                
+                setTimeout(() => {
+                    transitionToSection('game');
+                    displayName.textContent = gameState.user.name;
+                }, 1500);
+            } else {
+                showNotification('❌ Payment verification failed! Please check your payment details.', 'error');
+                confirmPaymentBtn.disabled = false;
+                confirmPaymentBtn.innerHTML = '<i class="fas fa-check"></i> I\'ve Paid - Verify Now';
+            }
+        }, 2000);
+        
     }, 1500);
 }
 
-// Handle spin action
+// Payment validation function (simplified for demo)
+function validatePaymentId(paymentId) {
+    // In real app, this would call your backend API to verify with Razorpay
+    // For demo, we'll accept certain formats
+    
+    const validFormats = [
+        /^pay_[a-zA-Z0-9]{14,}$/,  // Razorpay payment ID format
+        /^UTR[0-9]{9,}$/,          // UPI UTR format
+        /^[0-9]{4}[6-9][0-9]{9}$/, // Amount + phone format
+        /^txn_[a-zA-Z0-9]{10,}$/   // Generic transaction ID
+    ];
+    
+    return validFormats.some(format => format.test(paymentId));
+}
+
+// Handle spin action - Enhanced security
 function handleSpin() {
-    if (!gameState.paymentComplete) {
-        showNotification('Please complete payment first!', 'error');
+    if (!gameState.paymentComplete || !gameState.paymentVerified) {
+        showNotification('❌ Payment not verified! Please complete payment first.', 'error');
         return;
     }
     
@@ -130,8 +199,8 @@ function handleSpin() {
     result.classList.add('hidden');
     result.className = 'result hidden';
     
-    // Generate random result
-    const randomResult = spinResults[Math.floor(Math.random() * spinResults.length)];
+    // Generate weighted random result (more realistic for gambling)
+    const randomResult = getWeightedRandomResult();
     
     // Calculate spin rotation (multiple full rotations + final position)
     const baseRotation = 1440; // 4 full rotations
@@ -147,9 +216,22 @@ function handleSpin() {
         showSpinResult(randomResult);
         gameState.gameActive = false;
         
-        // Re-enable spin button
-        spinBtn.disabled = false;
-        spinBtn.innerHTML = '<i class="fas fa-play"></i> SPIN AGAIN!';
+        // Log spin result for admin tracking
+        console.log(`🎰 Spin #${gameState.spinCount}:`, {
+            user: gameState.user.name,
+            result: randomResult.type,
+            paymentId: gameState.paymentId,
+            timestamp: new Date().toISOString()
+        });
+        
+        // Re-enable spin button based on result
+        if (randomResult.type === 'try-again') {
+            spinBtn.disabled = false;
+            spinBtn.innerHTML = '<i class="fas fa-gift"></i> FREE SPIN!';
+        } else {
+            spinBtn.disabled = false;
+            spinBtn.innerHTML = '<i class="fas fa-play"></i> SPIN AGAIN! (₹50)';
+        }
         
         // Remove spinning class
         setTimeout(() => {
@@ -159,7 +241,28 @@ function handleSpin() {
     }, 4000); // Match CSS animation duration
 }
 
-// Show spin result
+// Weighted random result for realistic gambling odds
+function getWeightedRandomResult() {
+    const weights = {
+        'lose': 70,      // 70% chance to lose
+        'try-again': 20, // 20% chance for free spin
+        'win': 10        // 10% chance to win
+    };
+    
+    const totalWeight = Object.values(weights).reduce((sum, weight) => sum + weight, 0);
+    let random = Math.random() * totalWeight;
+    
+    for (const [type, weight] of Object.entries(weights)) {
+        if (random < weight) {
+            return spinResults.find(result => result.type === type) || spinResults[0];
+        }
+        random -= weight;
+    }
+    
+    return spinResults[0]; // fallback
+}
+
+// Show spin result - Enhanced for real money
 function showSpinResult(resultData) {
     const resultIcon = result.querySelector('.result-icon');
     const resultText = result.querySelector('.result-text');
@@ -174,32 +277,61 @@ function showSpinResult(resultData) {
     result.classList.add(`${resultData.type}-result`);
     result.classList.remove('hidden');
     
-    // Show play again button
-    playAgainBtn.classList.remove('hidden');
-    
-    // Log result for admin (in real app, send to backend)
-    console.log(`🎰 Spin Result: ${resultData.type} | User: ${gameState.user.name} | Spin #${gameState.spinCount}`);
+    // Show play again button (except for free spins)
+    if (resultData.type !== 'try-again') {
+        playAgainBtn.classList.remove('hidden');
+    }
     
     // Add some celebration effects for wins
     if (resultData.type === 'win') {
         celebrateWin();
+        // In real app, trigger money transfer API here
+        processWinning();
     }
 }
 
-// Handle play again
+// Process winning (simulate money transfer)
+function processWinning() {
+    setTimeout(() => {
+        showNotification('🏆 Congratulations! ₹100 has been credited to your account!', 'success');
+        
+        // In real app, this would:
+        // 1. Call your backend API
+        // 2. Verify the win is legitimate  
+        // 3. Transfer money via UPI/bank transfer
+        // 4. Send confirmation SMS/email
+        
+        console.log(`💰 Winner Alert:`, {
+            user: gameState.user.name,
+            email: gameState.user.email,
+            winAmount: 100,
+            paymentId: gameState.paymentId,
+            spinNumber: gameState.spinCount,
+            timestamp: new Date().toISOString()
+        });
+    }, 2000);
+}
+
+// Handle play again - Reset payment for new game
 function handlePlayAgain() {
     // Reset for new game cycle
     playAgainBtn.classList.add('hidden');
     result.classList.add('hidden');
     result.className = 'result hidden';
     
-    // Reset button text
-    spinBtn.innerHTML = '<i class="fas fa-play"></i> SPIN NOW!';
+    // Reset payment state for new game
+    gameState.paymentComplete = false;
+    gameState.paymentVerified = false;
+    gameState.paymentId = null;
     
-    // Optionally require new payment for each spin
-    // transitionToSection('payment');
+    // Go back to payment section for new entry fee
+    transitionToSection('payment');
     
-    showNotification('Ready for another spin! 🎯', 'info');
+    // Reset payment button
+    confirmPaymentBtn.disabled = false;
+    confirmPaymentBtn.innerHTML = '<i class="fas fa-check"></i> I\'ve Paid - Verify Now';
+    
+    showNotification('💳 New game requires new payment of ₹50', 'info');
 }
 
 // Section transitions

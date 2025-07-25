@@ -187,6 +187,75 @@ body {
     border-radius: 12px;
 }
 
+/* Payment Steps */
+.payment-steps {
+    margin: 20px 0;
+    text-align: left;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+}
+
+.step-number {
+    background: #667eea;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.step-content h4 {
+    margin: 0 0 5px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.step-content p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+/* Security Notice */
+.security-notice {
+    margin-top: 20px;
+    padding: 15px;
+    background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+    border-radius: 12px;
+    border: 2px solid #56ab2f;
+    text-align: left;
+}
+
+.security-notice h5 {
+    margin: 0 0 10px 0;
+    color: #56ab2f;
+    font-size: 16px;
+}
+
+.security-notice ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.security-notice li {
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 14px;
+}
+
 /* User Info */
 .user-info {
     margin-bottom: 20px;
@@ -195,6 +264,50 @@ body {
 .user-info p {
     font-size: 18px;
     color: #555;
+    margin-bottom: 10px;
+}
+
+.game-stats {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.stat {
+    background: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #666;
+    margin: 5px;
+}
+
+/* Game Rules */
+.game-rules {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    text-align: left;
+}
+
+.game-rules h5 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+    text-align: center;
+}
+
+.game-rules ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.game-rules li {
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 14px;
 }
 
 /* Spinner Styles */
@@ -224,23 +337,30 @@ body {
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 12px;
     color: white;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 
-.slice:nth-child(1) { background: #ff6b6b; transform: rotate(0deg); }
-.slice:nth-child(2) { background: #4ecdc4; transform: rotate(45deg); }
-.slice:nth-child(3) { background: #45b7d1; transform: rotate(90deg); }
-.slice:nth-child(4) { background: #96ceb4; transform: rotate(135deg); }
-.slice:nth-child(5) { background: #feca57; transform: rotate(180deg); }
-.slice:nth-child(6) { background: #ff9ff3; transform: rotate(225deg); }
-.slice:nth-child(7) { background: #54a0ff; transform: rotate(270deg); }
-.slice:nth-child(8) { background: #5f27cd; transform: rotate(315deg); }
+.slice:nth-child(1) { transform: rotate(0deg); }
+.slice:nth-child(2) { transform: rotate(45deg); }
+.slice:nth-child(3) { transform: rotate(90deg); }
+.slice:nth-child(4) { transform: rotate(135deg); }
+.slice:nth-child(5) { transform: rotate(180deg); }
+.slice:nth-child(6) { transform: rotate(225deg); }
+.slice:nth-child(7) { transform: rotate(270deg); }
+.slice:nth-child(8) { transform: rotate(315deg); }
 
-.slice.win { background: linear-gradient(45deg, #56ab2f, #a8e6cf) !important; }
-.slice.lose { background: linear-gradient(45deg, #ff6b6b, #ff8e8e) !important; }
-.slice.try-again { background: linear-gradient(45deg, #ffa500, #ffcc02) !important; }
+.slice.win { 
+    background: linear-gradient(45deg, #56ab2f, #a8e6cf) !important; 
+    font-size: 10px;
+}
+.slice.lose { 
+    background: linear-gradient(45deg, #ff6b6b, #ff8e8e) !important; 
+}
+.slice.try-again { 
+    background: linear-gradient(45deg, #ffa500, #ffcc02) !important; 
+}
 
 .pointer {
     position: absolute;
@@ -391,6 +511,21 @@ body {
     .result-text {
         font-size: 1.5rem;
     }
+    
+    .game-stats {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .step {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .step-number {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
 }
 
 /* Disabled state */
@@ -403,6 +538,18 @@ body {
 }
 
 .btn-spin:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-success:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-success:disabled:hover {
     transform: none;
     box-shadow: none;
 }

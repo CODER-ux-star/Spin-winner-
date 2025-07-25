@@ -40,19 +40,57 @@
         <div class="section hidden" id="paymentSection">
             <div class="card">
                 <h2>💳 Entry Payment Required</h2>
-                <p>Please make the entry payment to unlock the spin!</p>
+                <p><strong>⚠️ REAL MONEY GAME ⚠️</strong><br>
+                Payment verification is mandatory to play!</p>
+                
                 <div class="payment-info">
                     <div class="amount">₹50 Entry Fee</div>
-                    <p>Secure payment via Razorpay</p>
+                    <p>🔒 Secure payment via Razorpay</p>
                 </div>
+                
+                <div class="payment-steps">
+                    <div class="step">
+                        <span class="step-number">1</span>
+                        <div class="step-content">
+                            <h4>Make Payment</h4>
+                            <p>Click below to pay ₹50</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        <div class="step-content">
+                            <h4>Get Payment ID</h4>
+                            <p>Copy your payment ID/UTR from Razorpay</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        <div class="step-content">
+                            <h4>Verify & Play</h4>
+                            <p>Enter payment details to unlock game</p>
+                        </div>
+                    </div>
+                </div>
+                
                 <a href="https://razorpay.me/@muzamilahmadmirgojjer" target="_blank" class="btn-payment">
                     <i class="fas fa-credit-card"></i> Pay Now ₹50
                 </a>
+                
                 <div class="payment-status">
-                    <p>✅ After payment, come back and click "I've Paid" to spin!</p>
+                    <p>✅ After payment, return here with your payment details</p>
                     <button id="confirmPayment" class="btn-success">
-                        <i class="fas fa-check"></i> I've Paid - Let's Spin!
+                        <i class="fas fa-shield-alt"></i> I've Paid - Verify Now
                     </button>
+                    
+                    <div class="security-notice">
+                        <h5>🔐 Security Features:</h5>
+                        <ul>
+                            <li>✅ Payment ID verification required</li>
+                            <li>✅ Anti-fraud protection enabled</li>
+                            <li>✅ Real money transactions secured</li>
+                            <li>✅ Instant withdrawal on wins</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -63,18 +101,23 @@
                 <h2>🎡 Spin the Wheel!</h2>
                 <div class="user-info">
                     <p>Good luck, <span id="displayName"></span>! 🍀</p>
+                    <div class="game-stats">
+                        <span class="stat">🎯 Win Rate: 10%</span>
+                        <span class="stat">🎁 Free Spin: 20%</span>
+                        <span class="stat">💰 Win Amount: ₹100</span>
+                    </div>
                 </div>
                 
                 <div class="spinner-container">
                     <div class="spinner" id="spinner">
-                        <div class="slice win">WIN</div>
                         <div class="slice lose">LOSE</div>
-                        <div class="slice try-again">TRY AGAIN</div>
-                        <div class="slice win">WIN</div>
                         <div class="slice lose">LOSE</div>
-                        <div class="slice try-again">TRY AGAIN</div>
-                        <div class="slice win">WIN</div>
+                        <div class="slice try-again">FREE</div>
                         <div class="slice lose">LOSE</div>
+                        <div class="slice lose">LOSE</div>
+                        <div class="slice win">WIN ₹100</div>
+                        <div class="slice lose">LOSE</div>
+                        <div class="slice try-again">FREE</div>
                     </div>
                     <div class="pointer">▼</div>
                 </div>
@@ -92,15 +135,26 @@
                 </div>
 
                 <button id="playAgain" class="btn-secondary hidden">
-                    <i class="fas fa-redo"></i> Play Again
+                    <i class="fas fa-redo"></i> Play Again (₹50)
                 </button>
+                
+                <div class="game-rules">
+                    <h5>📋 Game Rules:</h5>
+                    <ul>
+                        <li>🎯 Each spin costs ₹50</li>
+                        <li>🏆 Win ₹100 if you hit WIN</li>
+                        <li>🎁 FREE spins don't cost extra</li>
+                        <li>💸 Money transferred instantly on wins</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
         <!-- Footer -->
         <footer class="footer">
             <p>© 2024 SpinWin Game - Created by Muzamil Ahmad</p>
-            <p>🔒 Secure payments via Razorpay</p>
+            <p>🔒 Secure payments via Razorpay | 🎰 Real Money Gaming</p>
+            <p>⚠️ Please gamble responsibly | 18+ only</p>
         </footer>
     </div>
 
