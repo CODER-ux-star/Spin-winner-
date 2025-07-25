@@ -64,6 +64,175 @@ body {
     background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
 }
 
+/* Wallet Styles */
+.wallet-section, .game-wallet {
+    margin-bottom: 20px;
+}
+
+.wallet-balance {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.wallet-balance h4 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+.wallet-balance .balance {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 10px 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.wallet-balance .upi-id {
+    font-size: 14px;
+    opacity: 0.8;
+    margin: 5px 0;
+}
+
+.wallet-balance .total-winnings {
+    font-size: 16px;
+    opacity: 0.9;
+    margin: 10px 0;
+}
+
+.btn-withdraw {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-withdraw:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(86, 171, 47, 0.4);
+}
+
+.min-withdraw {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-top: 10px;
+}
+
+/* Game Info */
+.game-info {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    text-align: left;
+}
+
+.game-info h5 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+    text-align: center;
+}
+
+.game-info ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.game-info li {
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 14px;
+}
+
+/* Payment Options */
+.payment-options {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.payment-option {
+    flex: 1;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 2px solid #e1e5e9;
+    text-align: left;
+}
+
+.payment-option h4 {
+    margin: 0 0 8px 0;
+    color: #667eea;
+    font-size: 14px;
+}
+
+.payment-option p {
+    margin: 0;
+    color: #666;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.admin-upi {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    margin: 10px 0;
+}
+
+/* Money Flow */
+.money-flow {
+    margin-top: 20px;
+    padding: 15px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    border: 2px solid #667eea;
+}
+
+.money-flow h5 {
+    margin: 0 0 15px 0;
+    color: #667eea;
+    font-size: 16px;
+    text-align: center;
+}
+
+.flow-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.flow-step {
+    background: #667eea;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    min-width: 70px;
+}
+
+.flow-arrow {
+    color: #667eea;
+    font-size: 18px;
+    font-weight: 700;
+}
+
 /* Form Styles */
 .input-group {
     position: relative;
@@ -525,6 +694,22 @@ body {
     .step-number {
         margin-right: 0;
         margin-bottom: 10px;
+    }
+    
+    .payment-options {
+        flex-direction: column;
+    }
+    
+    .flow-diagram {
+        flex-direction: column;
+    }
+    
+    .flow-arrow {
+        transform: rotate(90deg);
+    }
+    
+    .wallet-balance .balance {
+        font-size: 2rem;
     }
 }
 

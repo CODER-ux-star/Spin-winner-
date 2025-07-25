@@ -19,7 +19,7 @@
         <div class="section" id="registrationSection">
             <div class="card">
                 <h2>🎮 Welcome to SpinWin!</h2>
-                <p>Enter your details to start playing</p>
+                <p><strong>Real Money Gaming Platform 💰</strong></p>
                 <form id="userForm">
                     <div class="input-group">
                         <i class="fas fa-user"></i>
@@ -30,15 +30,30 @@
                         <input type="email" id="userEmail" placeholder="Enter your email" required>
                     </div>
                     <button type="submit" class="btn-primary">
-                        <i class="fas fa-play"></i> Start Game
+                        <i class="fas fa-play"></i> Start Gaming
                     </button>
                 </form>
+                
+                <div class="game-info">
+                    <h5>💰 How Money Works:</h5>
+                    <ul>
+                        <li>🎯 Pay ₹50 per game entry</li>
+                        <li>🏆 Win ₹100 on successful spins</li>
+                        <li>💸 Instant UPI withdrawals</li>
+                        <li>🎁 Free spins don't cost extra</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
         <!-- Payment Section -->
         <div class="section hidden" id="paymentSection">
             <div class="card">
+                <!-- Wallet Display -->
+                <div id="walletInfo" class="wallet-section">
+                    <!-- Wallet content will be populated by JavaScript -->
+                </div>
+                
                 <h2>💳 Entry Payment Required</h2>
                 <p><strong>⚠️ REAL MONEY GAME ⚠️</strong><br>
                 Payment verification is mandatory to play!</p>
@@ -46,6 +61,18 @@
                 <div class="payment-info">
                     <div class="amount">₹50 Entry Fee</div>
                     <p>🔒 Secure payment via Razorpay</p>
+                    <p class="admin-upi">💰 Send to: <strong>muzamil@paytm</strong></p>
+                </div>
+                
+                <div class="payment-options">
+                    <div class="payment-option">
+                        <h4>💳 Option 1: Use Wallet</h4>
+                        <p>If you have wallet balance, click verify to use it</p>
+                    </div>
+                    <div class="payment-option">
+                        <h4>💸 Option 2: Fresh Payment</h4>
+                        <p>Pay ₹50 via Razorpay and verify with transaction ID</p>
+                    </div>
                 </div>
                 
                 <div class="payment-steps">
@@ -53,42 +80,43 @@
                         <span class="step-number">1</span>
                         <div class="step-content">
                             <h4>Make Payment</h4>
-                            <p>Click below to pay ₹50</p>
+                            <p>Pay ₹50 to muzamil@paytm or use Razorpay link</p>
                         </div>
                     </div>
                     <div class="step">
                         <span class="step-number">2</span>
                         <div class="step-content">
-                            <h4>Get Payment ID</h4>
-                            <p>Copy your payment ID/UTR from Razorpay</p>
+                            <h4>Get Transaction ID</h4>
+                            <p>Copy your UPI transaction ID or payment reference</p>
                         </div>
                     </div>
                     <div class="step">
                         <span class="step-number">3</span>
                         <div class="step-content">
                             <h4>Verify & Play</h4>
-                            <p>Enter payment details to unlock game</p>
+                            <p>Enter transaction details to unlock game</p>
                         </div>
                     </div>
                 </div>
                 
                 <a href="https://razorpay.me/@muzamilahmadmirgojjer" target="_blank" class="btn-payment">
-                    <i class="fas fa-credit-card"></i> Pay Now ₹50
+                    <i class="fas fa-credit-card"></i> Pay ₹50 via Razorpay
                 </a>
                 
                 <div class="payment-status">
-                    <p>✅ After payment, return here with your payment details</p>
+                    <p>✅ After payment, return here with your transaction details</p>
                     <button id="confirmPayment" class="btn-success">
                         <i class="fas fa-shield-alt"></i> I've Paid - Verify Now
                     </button>
                     
                     <div class="security-notice">
-                        <h5>🔐 Security Features:</h5>
+                        <h5>🔐 Money Security Features:</h5>
                         <ul>
                             <li>✅ Payment ID verification required</li>
-                            <li>✅ Anti-fraud protection enabled</li>
-                            <li>✅ Real money transactions secured</li>
-                            <li>✅ Instant withdrawal on wins</li>
+                            <li>✅ Wallet system for easy transactions</li>
+                            <li>✅ Instant UPI withdrawals on wins</li>
+                            <li>✅ Complete transaction history tracking</li>
+                            <li>✅ Minimum withdrawal: ₹100</li>
                         </ul>
                     </div>
                 </div>
@@ -98,6 +126,11 @@
         <!-- Spinner Game Section -->
         <div class="section hidden" id="gameSection">
             <div class="game-card">
+                <!-- Wallet Display in Game -->
+                <div id="gameWalletInfo" class="game-wallet">
+                    <!-- Wallet content will be populated by JavaScript -->
+                </div>
+                
                 <h2>🎡 Spin the Wheel!</h2>
                 <div class="user-info">
                     <p>Good luck, <span id="displayName"></span>! 🍀</p>
@@ -139,13 +172,27 @@
                 </button>
                 
                 <div class="game-rules">
-                    <h5>📋 Game Rules:</h5>
+                    <h5>📋 Money Rules:</h5>
                     <ul>
-                        <li>🎯 Each spin costs ₹50</li>
-                        <li>🏆 Win ₹100 if you hit WIN</li>
-                        <li>🎁 FREE spins don't cost extra</li>
-                        <li>💸 Money transferred instantly on wins</li>
+                        <li>🎯 Each spin costs ₹50 (deducted from wallet or fresh payment)</li>
+                        <li>🏆 Win ₹100 if you hit WIN (added to wallet instantly)</li>
+                        <li>🎁 FREE spins don't cost extra money</li>
+                        <li>💸 Withdraw winnings anytime via UPI (min ₹100)</li>
+                        <li>📊 All transactions are tracked and logged</li>
                     </ul>
+                </div>
+                
+                <div class="money-flow">
+                    <h5>💰 Money Flow:</h5>
+                    <div class="flow-diagram">
+                        <div class="flow-step">Pay ₹50</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">Spin Wheel</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">Win ₹100</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">UPI Transfer</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -153,11 +200,38 @@
         <!-- Footer -->
         <footer class="footer">
             <p>© 2024 SpinWin Game - Created by Muzamil Ahmad</p>
-            <p>🔒 Secure payments via Razorpay | 🎰 Real Money Gaming</p>
-            <p>⚠️ Please gamble responsibly | 18+ only</p>
+            <p>🔒 Secure payments via Razorpay | 💰 Real Money Gaming</p>
+            <p>⚠️ Please gamble responsibly | 18+ only | Licensed Platform</p>
         </footer>
     </div>
 
     <script src="script.js"></script>
+    <script>
+        // Update wallet display in both sections
+        function updateWalletDisplay() {
+            const walletHTML = `
+                <div class="wallet-balance">
+                    <h4>💰 Your Wallet</h4>
+                    <p class="balance">₹${gameState.user.walletBalance || 0}</p>
+                    <p class="upi-id">UPI: ${gameState.user.upiId || 'Not set'}</p>
+                    <p class="total-winnings">Total Winnings: ₹${gameState.totalWinnings || 0}</p>
+                    ${(gameState.user.walletBalance || 0) >= 100 ? 
+                        '<button onclick="withdrawMoney()" class="btn-withdraw">💸 Withdraw Money</button>' : 
+                        '<p class="min-withdraw">Min withdrawal: ₹100</p>'}
+                </div>
+            `;
+            
+            const walletInfo = document.getElementById('walletInfo');
+            const gameWalletInfo = document.getElementById('gameWalletInfo');
+            
+            if (walletInfo) walletInfo.innerHTML = walletHTML;
+            if (gameWalletInfo) gameWalletInfo.innerHTML = walletHTML;
+        }
+        
+        // Call update on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(updateWalletDisplay, 1000);
+        });
+    </script>
 </body>
 </html>

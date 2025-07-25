@@ -2,13 +2,28 @@
 let gameState = {
     user: {
         name: '',
-        email: ''
+        email: '',
+        phone: '',
+        upiId: '',
+        walletBalance: 0
     },
     paymentComplete: false,
     gameActive: false,
     spinCount: 0,
     paymentId: null,
-    paymentVerified: false
+    paymentVerified: false,
+    totalWinnings: 0,
+    gameHistory: []
+};
+
+// Money Management Configuration
+const GAME_CONFIG = {
+    entryFee: 50,
+    winAmount: 100,
+    adminUPI: 'muzamil@paytm', // Your UPI ID for receiving payments
+    adminRazorpayKey: 'rzp_test_1234567890', // Your Razorpay key
+    minWithdrawal: 100,
+    maxWithdrawal: 10000
 };
 
 // DOM Elements
@@ -31,7 +46,7 @@ const spinResults = [
     { type: 'lose', text: 'YOU LOST', message: 'Almost there! 😔', icon: '😔' },
     { type: 'try-again', text: 'FREE SPIN!', message: 'Lucky! One more chance! 🍀', icon: '🎯' },
     { type: 'lose', text: 'YOU LOST', message: 'Keep trying! 💪', icon: '😕' },
-    { type: 'win', text: 'YOU WON!', message: 'Congratulations! Money sent to your account! 🎉', icon: '🏆' },
+    { type: 'win', text: 'YOU WON!', message: 'Congratulations! Money added to wallet! 🎉', icon: '🏆' },
     { type: 'lose', text: 'YOU LOST', message: 'Better luck next time! 😔', icon: '😢' }
 ];
 
@@ -39,12 +54,36 @@ const spinResults = [
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🎰 SpinWin Game Loaded!');
     initializeEventListeners();
+    loadUserData();
     
     // Add some fun loading effects
     setTimeout(() => {
         document.body.classList.add('loaded');
     }, 500);
 });
+
+// Load saved user data from localStorage
+function loadUserData() {
+    const savedData = localStorage.getItem('spinWinUserData');
+    if (savedData) {
+        const userData = JSON.parse(savedData);
+        gameState.user = { ...gameState.user, ...userData };
+        updateWalletDisplay();
+    }
+}
+
+// Save user data to localStorage
+function saveUserData() {
+    localStorage.setItem('spinWinUserData', JSON.stringify({
+        name: gameState.user.name,
+        email: gameState.user.email,
+        phone: gameState.user.phone,
+        upiId: gameState.user.upiId,
+        walletBalance: gameState.user.walletBalance,
+        totalWinnings: gameState.totalWinnings,
+        gameHistory: gameState.gameHistory
+    }));
+}
 
 // Event Listeners
 function initializeEventListeners() {
@@ -71,7 +110,7 @@ function initializeEventListeners() {
     });
 }
 
-// Handle user registration
+// Enhanced user registration with UPI details
 function handleUserRegistration(e) {
     e.preventDefault();
     
@@ -89,95 +128,194 @@ function handleUserRegistration(e) {
         return;
     }
     
+    // Get UPI ID and phone for money transfer
+    const phone = prompt('📱 Enter your phone number for UPI payments:\n(Required for sending winnings)');
+    if (!phone || phone.length < 10) {
+        showNotification('Valid phone number required for money transfer!', 'error');
+        return;
+    }
+    
+    const upiId = prompt('💳 Enter your UPI ID for receiving winnings:\n(Example: yourname@paytm, yourname@phonepe)\n\nOr press Cancel to use phone number for UPI');
+    
     // Store user data
     gameState.user.name = name;
     gameState.user.email = email;
+    gameState.user.phone = phone;
+    gameState.user.upiId = upiId || `${phone}@paytm`; // Default UPI format
+    
+    saveUserData();
     
     // Show success and transition to payment
-    showNotification(`Welcome, ${name}! 🎮`, 'success');
+    showNotification(`Welcome, ${name}! 🎮\nUPI: ${gameState.user.upiId}`, 'success');
     
     setTimeout(() => {
         transitionToSection('payment');
+        updateWalletDisplay();
     }, 1000);
 }
 
-// Handle payment confirmation - Made more secure
+// Update wallet display
+function updateWalletDisplay() {
+    const walletInfo = document.getElementById('walletInfo');
+    if (walletInfo) {
+        walletInfo.innerHTML = `
+            <div class="wallet-balance">
+                <h4>💰 Your Wallet</h4>
+                <p class="balance">₹${gameState.user.walletBalance}</p>
+                <p class="upi-id">UPI: ${gameState.user.upiId}</p>
+                ${gameState.user.walletBalance >= GAME_CONFIG.minWithdrawal ? 
+                    '<button onclick="withdrawMoney()" class="btn-withdraw">💸 Withdraw</button>' : 
+                    '<p class="min-withdraw">Min withdrawal: ₹100</p>'}
+            </div>
+        `;
+    }
+}
+
+// Handle payment confirmation with real money flow
 function handlePaymentConfirmation() {
+    // Check if user can afford the game
+    if (gameState.user.walletBalance >= GAME_CONFIG.entryFee) {
+        // Deduct from wallet
+        const useWallet = confirm(`You have ₹${gameState.user.walletBalance} in wallet.\n\nUse wallet money (₹${GAME_CONFIG.entryFee}) or pay fresh?\n\nOK = Use Wallet\nCancel = Pay Fresh`);
+        
+        if (useWallet) {
+            deductFromWallet();
+            return;
+        }
+    }
+    
     // Show payment verification process
     confirmPaymentBtn.disabled = true;
     confirmPaymentBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying Payment...';
     
     showNotification('⏳ Verifying your payment with Razorpay...', 'info');
     
-    // Simulate payment verification delay (in real app, this would be API call)
+    // Simulate payment verification delay
     setTimeout(() => {
         // Ask user for payment confirmation details
-        const paymentId = prompt(
-            "🔐 Payment Verification Required!\n\n" +
-            "To verify your payment, please enter:\n" +
-            "- Your Razorpay payment ID (starts with 'pay_')\n" +
-            "- Or your UTR/Reference Number\n" +
-            "- Or last 4 digits of amount + your phone number\n\n" +
-            "Example: pay_123abc or UTR123456789"
+        const paymentDetails = prompt(
+            `🔐 Payment Verification Required!\n\n` +
+            `Payment Amount: ₹${GAME_CONFIG.entryFee}\n` +
+            `Admin UPI: ${GAME_CONFIG.adminUPI}\n\n` +
+            `Enter your payment details:\n` +
+            `- Razorpay payment ID (starts with 'pay_')\n` +
+            `- UPI Transaction ID/UTR\n` +
+            `- Reference Number\n\n` +
+            `Example: pay_123abc or UPI123456789`
         );
         
-        if (!paymentId || paymentId.trim().length < 8) {
+        if (!paymentDetails || paymentDetails.trim().length < 8) {
             showNotification('❌ Invalid payment details! Please try again.', 'error');
             confirmPaymentBtn.disabled = false;
-            confirmPaymentBtn.innerHTML = '<i class="fas fa-check"></i> I\'ve Paid - Verify Now';
+            confirmPaymentBtn.innerHTML = '<i class="fas fa-shield-alt"></i> I\'ve Paid - Verify Now';
             return;
         }
         
         // Store payment ID for verification
-        gameState.paymentId = paymentId.trim();
+        gameState.paymentId = paymentDetails.trim();
         
-        // Simulate API verification (in real app, verify with Razorpay API)
+        // Simulate API verification
         setTimeout(() => {
-            // For demo - simple validation (in real app, call backend API)
-            if (validatePaymentId(paymentId)) {
-                gameState.paymentComplete = true;
-                gameState.paymentVerified = true;
-                
-                showNotification('✅ Payment verified successfully!', 'success');
-                
-                // Log payment for admin tracking
-                console.log(`💳 Payment Verified:`, {
-                    user: gameState.user.name,
-                    email: gameState.user.email,
-                    paymentId: gameState.paymentId,
-                    timestamp: new Date().toISOString()
-                });
-                
-                setTimeout(() => {
-                    transitionToSection('game');
-                    displayName.textContent = gameState.user.name;
-                }, 1500);
+            if (validatePaymentId(paymentDetails)) {
+                processPaymentSuccess();
             } else {
                 showNotification('❌ Payment verification failed! Please check your payment details.', 'error');
                 confirmPaymentBtn.disabled = false;
-                confirmPaymentBtn.innerHTML = '<i class="fas fa-check"></i> I\'ve Paid - Verify Now';
+                confirmPaymentBtn.innerHTML = '<i class="fas fa-shield-alt"></i> I\'ve Paid - Verify Now';
             }
         }, 2000);
         
     }, 1500);
 }
 
-// Payment validation function (simplified for demo)
-function validatePaymentId(paymentId) {
-    // In real app, this would call your backend API to verify with Razorpay
-    // For demo, we'll accept certain formats
+// Deduct money from user wallet
+function deductFromWallet() {
+    gameState.user.walletBalance -= GAME_CONFIG.entryFee;
+    gameState.paymentComplete = true;
+    gameState.paymentVerified = true;
+    gameState.paymentId = `wallet_${Date.now()}`;
     
+    saveUserData();
+    updateWalletDisplay();
+    
+    showNotification(`✅ ₹${GAME_CONFIG.entryFee} deducted from wallet!`, 'success');
+    
+    // Log transaction
+    logTransaction('wallet_debit', GAME_CONFIG.entryFee, 'Game entry fee');
+    
+    setTimeout(() => {
+        transitionToSection('game');
+        displayName.textContent = gameState.user.name;
+        updateWalletDisplay();
+    }, 1500);
+}
+
+// Process successful payment
+function processPaymentSuccess() {
+    gameState.paymentComplete = true;
+    gameState.paymentVerified = true;
+    
+    showNotification('✅ Payment verified successfully!', 'success');
+    
+    // Log payment for admin tracking
+    logTransaction('payment_received', GAME_CONFIG.entryFee, `Payment ID: ${gameState.paymentId}`);
+    
+    setTimeout(() => {
+        transitionToSection('game');
+        displayName.textContent = gameState.user.name;
+        updateWalletDisplay();
+    }, 1500);
+}
+
+// Log all transactions for admin tracking
+function logTransaction(type, amount, details) {
+    const transaction = {
+        timestamp: new Date().toISOString(),
+        user: gameState.user.name,
+        email: gameState.user.email,
+        phone: gameState.user.phone,
+        upiId: gameState.user.upiId,
+        type: type,
+        amount: amount,
+        details: details,
+        paymentId: gameState.paymentId,
+        walletBalance: gameState.user.walletBalance
+    };
+    
+    gameState.gameHistory.push(transaction);
+    saveUserData();
+    
+    // In real app, send to backend API
+    console.log(`💰 Transaction Logged:`, transaction);
+    
+    // Simulate sending to admin dashboard
+    sendToAdminDashboard(transaction);
+}
+
+// Send transaction data to admin (simulate API call)
+function sendToAdminDashboard(transaction) {
+    // In real app, this would be an API call to your backend
+    console.log(`📊 Admin Dashboard Update:`, {
+        action: 'NEW_TRANSACTION',
+        data: transaction,
+        adminNotification: `${transaction.user} - ${transaction.type} - ₹${transaction.amount}`
+    });
+}
+
+// Payment validation function
+function validatePaymentId(paymentId) {
     const validFormats = [
         /^pay_[a-zA-Z0-9]{14,}$/,  // Razorpay payment ID format
         /^UTR[0-9]{9,}$/,          // UPI UTR format
-        /^[0-9]{4}[6-9][0-9]{9}$/, // Amount + phone format
+        /^UPI[0-9]{9,}$/,          // UPI Transaction ID format
+        /^[0-9]{12,}$/,            // Generic transaction number
         /^txn_[a-zA-Z0-9]{10,}$/   // Generic transaction ID
     ];
     
     return validFormats.some(format => format.test(paymentId));
 }
 
-// Handle spin action - Enhanced security
+// Enhanced spin with money management
 function handleSpin() {
     if (!gameState.paymentComplete || !gameState.paymentVerified) {
         showNotification('❌ Payment not verified! Please complete payment first.', 'error');
@@ -199,11 +337,11 @@ function handleSpin() {
     result.classList.add('hidden');
     result.className = 'result hidden';
     
-    // Generate weighted random result (more realistic for gambling)
+    // Generate weighted random result
     const randomResult = getWeightedRandomResult();
     
-    // Calculate spin rotation (multiple full rotations + final position)
-    const baseRotation = 1440; // 4 full rotations
+    // Calculate spin rotation
+    const baseRotation = 1440;
     const randomExtra = Math.floor(Math.random() * 360);
     const finalRotation = baseRotation + randomExtra;
     
@@ -216,13 +354,10 @@ function handleSpin() {
         showSpinResult(randomResult);
         gameState.gameActive = false;
         
-        // Log spin result for admin tracking
-        console.log(`🎰 Spin #${gameState.spinCount}:`, {
-            user: gameState.user.name,
-            result: randomResult.type,
-            paymentId: gameState.paymentId,
-            timestamp: new Date().toISOString()
-        });
+        // Log spin result
+        logTransaction('game_result', 
+            randomResult.type === 'win' ? GAME_CONFIG.winAmount : 0, 
+            `Spin #${gameState.spinCount} - ${randomResult.type}`);
         
         // Re-enable spin button based on result
         if (randomResult.type === 'try-again') {
@@ -238,7 +373,7 @@ function handleSpin() {
             spinner.classList.remove('spinning');
         }, 1000);
         
-    }, 4000); // Match CSS animation duration
+    }, 4000);
 }
 
 // Weighted random result for realistic gambling odds
@@ -262,7 +397,7 @@ function getWeightedRandomResult() {
     return spinResults[0]; // fallback
 }
 
-// Show spin result - Enhanced for real money
+// Show spin result with money management
 function showSpinResult(resultData) {
     const resultIcon = result.querySelector('.result-icon');
     const resultText = result.querySelector('.result-text');
@@ -282,34 +417,110 @@ function showSpinResult(resultData) {
         playAgainBtn.classList.remove('hidden');
     }
     
-    // Add some celebration effects for wins
+    // Process winning
     if (resultData.type === 'win') {
         celebrateWin();
-        // In real app, trigger money transfer API here
         processWinning();
     }
 }
 
-// Process winning (simulate money transfer)
+// Process winning - Add money to wallet and trigger transfer
 function processWinning() {
+    // Add money to user wallet
+    gameState.user.walletBalance += GAME_CONFIG.winAmount;
+    gameState.totalWinnings += GAME_CONFIG.winAmount;
+    
+    saveUserData();
+    updateWalletDisplay();
+    
+    // Log winning transaction
+    logTransaction('win_credit', GAME_CONFIG.winAmount, `Wallet credited - Total: ₹${gameState.user.walletBalance}`);
+    
     setTimeout(() => {
-        showNotification('🏆 Congratulations! ₹100 has been credited to your account!', 'success');
+        showNotification(`🏆 ₹${GAME_CONFIG.winAmount} added to your wallet!`, 'success');
+        
+        // Simulate instant UPI transfer (in real app, use payment gateway API)
+        if (gameState.user.walletBalance >= GAME_CONFIG.minWithdrawal) {
+            setTimeout(() => {
+                const autoWithdraw = confirm(`💸 Auto-withdraw ₹${GAME_CONFIG.winAmount} to ${gameState.user.upiId}?\n\nOK = Withdraw Now\nCancel = Keep in Wallet`);
+                
+                if (autoWithdraw) {
+                    withdrawMoney(GAME_CONFIG.winAmount);
+                }
+            }, 2000);
+        }
+        
+    }, 2000);
+}
+
+// Withdraw money function
+function withdrawMoney(amount = null) {
+    const withdrawAmount = amount || prompt(`💸 Enter withdrawal amount:\n\nAvailable: ₹${gameState.user.walletBalance}\nMin: ₹${GAME_CONFIG.minWithdrawal}\nMax: ₹${GAME_CONFIG.maxWithdrawal}`);
+    
+    if (!withdrawAmount || isNaN(withdrawAmount)) {
+        showNotification('❌ Invalid amount!', 'error');
+        return;
+    }
+    
+    const amountNum = parseInt(withdrawAmount);
+    
+    if (amountNum < GAME_CONFIG.minWithdrawal) {
+        showNotification(`❌ Minimum withdrawal: ₹${GAME_CONFIG.minWithdrawal}`, 'error');
+        return;
+    }
+    
+    if (amountNum > gameState.user.walletBalance) {
+        showNotification('❌ Insufficient balance!', 'error');
+        return;
+    }
+    
+    if (amountNum > GAME_CONFIG.maxWithdrawal) {
+        showNotification(`❌ Maximum withdrawal: ₹${GAME_CONFIG.maxWithdrawal}`, 'error');
+        return;
+    }
+    
+    // Process withdrawal
+    gameState.user.walletBalance -= amountNum;
+    saveUserData();
+    updateWalletDisplay();
+    
+    // Log withdrawal
+    logTransaction('withdrawal', amountNum, `UPI: ${gameState.user.upiId}`);
+    
+    // Simulate UPI transfer
+    processUPITransfer(amountNum);
+}
+
+// Simulate UPI transfer (in real app, integrate with payment gateway)
+function processUPITransfer(amount) {
+    showNotification('⏳ Processing UPI transfer...', 'info');
+    
+    // Simulate API call delay
+    setTimeout(() => {
+        // Generate fake transaction ID
+        const transactionId = 'TXN' + Date.now();
+        
+        showNotification(`✅ ₹${amount} sent to ${gameState.user.upiId}\nTransaction ID: ${transactionId}`, 'success');
+        
+        // Log successful transfer
+        logTransaction('upi_transfer_success', amount, `TXN ID: ${transactionId} | UPI: ${gameState.user.upiId}`);
         
         // In real app, this would:
-        // 1. Call your backend API
-        // 2. Verify the win is legitimate  
-        // 3. Transfer money via UPI/bank transfer
-        // 4. Send confirmation SMS/email
+        // 1. Call UPI payment gateway API
+        // 2. Verify transfer success
+        // 3. Send SMS confirmation
+        // 4. Update database
+        // 5. Send admin notification
         
-        console.log(`💰 Winner Alert:`, {
+        console.log(`💸 UPI Transfer Completed:`, {
+            amount: amount,
+            upiId: gameState.user.upiId,
+            transactionId: transactionId,
             user: gameState.user.name,
-            email: gameState.user.email,
-            winAmount: 100,
-            paymentId: gameState.paymentId,
-            spinNumber: gameState.spinCount,
             timestamp: new Date().toISOString()
         });
-    }, 2000);
+        
+    }, 3000);
 }
 
 // Handle play again - Reset payment for new game
@@ -329,7 +540,7 @@ function handlePlayAgain() {
     
     // Reset payment button
     confirmPaymentBtn.disabled = false;
-    confirmPaymentBtn.innerHTML = '<i class="fas fa-check"></i> I\'ve Paid - Verify Now';
+    confirmPaymentBtn.innerHTML = '<i class="fas fa-shield-alt"></i> I\'ve Paid - Verify Now';
     
     showNotification('💳 New game requires new payment of ₹50', 'info');
 }
