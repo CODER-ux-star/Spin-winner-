@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App name -->
+    <string name="app_name">SMS &amp; Contacts Reader</string>
+    
+    <!-- Button texts -->
+    <string name="request_permissions">Request Permissions</string>
+    <string name="read_sms">Read SMS Messages</string>
+    <string name="read_contacts">Read Contacts</string>
+    
+    <!-- Messages -->
+    <string name="welcome_message">Welcome! Please request permissions first.</string>
+    <string name="permissions_granted">All permissions granted! You can now read SMS and Contacts.</string>
+    <string name="permissions_required">Permissions required! Click \'Request Permissions\' button.</string>
+    <string name="permissions_denied">Permissions denied! Please grant permissions in Settings.</string>
+    
+    <!-- Toast messages -->
+    <string name="sms_permission_denied">SMS permission not granted!</string>
+    <string name="contacts_permission_denied">Contacts permission not granted!</string>
+    <string name="all_permissions_granted">All permissions granted!</string>
+    <string name="permissions_denied_toast">Permissions denied! App cannot function properly.</string>
+    
+    <!-- Note text -->
+    <string name="note_text">Note: This app requires SMS and Contacts permissions to function properly.</string>
+</resources>

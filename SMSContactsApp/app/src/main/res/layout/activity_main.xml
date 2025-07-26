@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#f5f5f5">
+
+    <!-- App Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SMS &amp; Contacts Reader"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#2196F3"
+        android:gravity="center"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Permission Request Button -->
+    <Button
+        android:id="@+id/btnRequestPermissions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Request Permissions"
+        android:textColor="#FFFFFF"
+        android:background="#FF5722"
+        android:layout_marginBottom="16dp"
+        android:padding="12dp" />
+
+    <!-- SMS Read Button -->
+    <Button
+        android:id="@+id/btnReadSMS"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Read SMS Messages"
+        android:textColor="#FFFFFF"
+        android:background="#4CAF50"
+        android:layout_marginBottom="16dp"
+        android:padding="12dp" />
+
+    <!-- Contacts Read Button -->
+    <Button
+        android:id="@+id/btnReadContacts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Read Contacts"
+        android:textColor="#FFFFFF"
+        android:background="#2196F3"
+        android:layout_marginBottom="16dp"
+        android:padding="12dp" />
+
+    <!-- Output TextView -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#FFFFFF"
+        android:padding="12dp"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:id="@+id/tvOutput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Welcome! Please request permissions first."
+            android:textSize="14sp"
+            android:textColor="#333333"
+            android:lineSpacingExtra="4dp" />
+
+    </ScrollView>
+
+    <!-- Info Text -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Note: This app requires SMS and Contacts permissions to function properly."
+        android:textSize="12sp"
+        android:textColor="#666666"
+        android:gravity="center"
+        android:layout_marginTop="8dp" />
+
+</LinearLayout>
